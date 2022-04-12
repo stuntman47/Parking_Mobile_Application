@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_parking"
+        android:icon="@drawable/ic_baseline_local_parking_24"
+        android:title="Parking" />
+
+    <item
+        android:id="@+id/navigation_history"
+        android:icon="@drawable/ic_baseline_history_24"
+        android:title="History" />
+
+    <item
+        android:id="@+id/navigation_ManageRFID"
+        android:icon="@drawable/ic_rfidscan"
+        android:title="Manage RFID" />
+
+</menu>

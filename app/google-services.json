@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1065128934416",
+    "firebase_url": "https://rfid-vehicle-database-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "rfid-vehicle-database",
+    "storage_bucket": "rfid-vehicle-database.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1065128934416:android:670c49c791f57126a09e95",
+        "android_client_info": {
+          "package_name": "com.example.parkingmobileapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1065128934416-eqfg29tuk3hhdvmpvic15tn6sjaqqdj0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhcQ6R3Dm4qlb5Mgg7MtA7Nyk41mH2Rw8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1065128934416-eqfg29tuk3hhdvmpvic15tn6sjaqqdj0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
