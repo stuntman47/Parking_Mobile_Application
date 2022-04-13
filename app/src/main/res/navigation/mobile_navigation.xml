@@ -9,7 +9,9 @@
         android:id="@+id/navigation_parking"
         android:name="com.example.parkingmobileapplication.ui.parking.ParkingFragment"
         android:label="Parking"
-        tools:layout="@layout/fragment_parking" />
+        tools:layout="@layout/fragment_parking" >
+
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_history"
@@ -22,4 +24,11 @@
         android:name="com.example.parkingmobileapplication.ui.rfid.ManageRFIDFragment"
         android:label="Manage RFID"
         tools:layout="@layout/fragment_managerfid" />
+
+    <fragment
+        android:id="@+id/navigation_reload"
+        android:name="com.example.parkingmobileapplication.ui.parking.Reload"
+        android:label="Reload"
+        tools:layout="@layout/fragment_reload"/>
+
 </navigation>

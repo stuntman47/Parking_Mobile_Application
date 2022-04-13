@@ -10,18 +10,24 @@
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
-        android:layout_height="360dp"
+        android:layout_height="300dp"
         android:background="@drawable/boardbox"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline"
+        app:layout_constraintGuide_begin="30dp"
+        android:orientation="vertical"/>
 
     <TextView
         android:id="@+id/text_balance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="80dp"
         android:fontFamily="sans-serif-medium"
         android:gravity="left"
         android:text="Balance"
@@ -29,7 +35,7 @@
         android:textSize="36sp"
         android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="@+id/textView"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -53,8 +59,9 @@
         android:text="RM"
         android:textColor="@color/greyish_black"
         android:textSize="56sp"
+        app:layout_constraintBottom_toBottomOf="@+id/value_balance"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/value_balance" />
+        app:layout_constraintStart_toStartOf="@+id/guideline" />
 
     <Button
         android:id="@+id/bt_tagid"
@@ -65,7 +72,7 @@
         android:text="E15094"
         android:backgroundTint="@color/greyish_black"
         android:textColor="@color/white"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="75dp"
         android:layout_marginLeft="10dp"
         app:layout_constraintBottom_toTopOf="@+id/value_balance"
         app:layout_constraintStart_toEndOf="@+id/text_balance"
@@ -75,52 +82,115 @@
         android:id="@+id/bt_reload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
         android:background="@drawable/roundedrectangle"
         android:text="Reload"
         android:textSize="24sp"
         app:backgroundTint="@null"
         app:layout_constraintBottom_toBottomOf="@+id/textView"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/RM" />
 
-    <ImageButton
-        android:id="@+id/bt_notifications"
+
+
+    <TextView
+        android:id="@+id/text_StartTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_baseline_notifications_none_24"
-        app:layout_constraintBottom_toTopOf="@+id/bt_tagid"
+        android:text="Start Time"
+        android:textColor="@color/yellow_text"
+        android:textStyle="italic"
+        android:textSize="28sp"
+        android:layout_marginTop="30dp"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/value_StartTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="00:00"
+        android:text="08:40 AM"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:layout_marginTop="15dp"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/text_StartTime" />
+
+    <TextView
+        android:id="@+id/text_chargeRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Charge Rate(hr)"
+        android:textSize="28sp"
+        android:textStyle="italic"
+        android:textColor="@color/yellow_text"
+        android:layout_marginLeft="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/text_StartTime"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/text_StartTime" />
 
-    <ImageButton
+    <TextView
+        android:id="@+id/RM_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_baseline_account_circle_24"
-        app:layout_constraintBottom_toTopOf="@+id/text_balance"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="RM"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="36dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="35dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/value_StartTime"
+        app:layout_constraintTop_toBottomOf="@+id/text_chargeRate" />
 
+    <TextView
+        android:id="@+id/value_chargeRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="2.00"
+        android:text="2.00"
+        android:textSize="36dp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toEndOf="@+id/RM_2"
+        app:layout_constraintTop_toBottomOf="@+id/text_chargeRate" />
 
     <TextView
         android:id="@+id/text_ElapsedTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Time Elapsed"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="Elapsed Time"
+        android:textColor="@color/yellow_text"
+        android:textSize="28sp"
+        android:textStyle="italic"
+        android:layout_marginTop="30dp"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/value_StartTime" />
 
-    <EditText
+    <TextView
         android:id="@+id/value_ElapsedTime"
-        android:layout_width="15mm"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Elapsed Time"
-        android:textColor="@color/black"
-        android:textColorHint="@color/grey"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:hint="00"
+        android:text="30"
+        android:textSize="36dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/text_ElapsedTime" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Minutes"
+        android:textSize="36dp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginLeft="10dp"
+        app:layout_constraintStart_toEndOf="@+id/value_ElapsedTime"
         app:layout_constraintTop_toBottomOf="@+id/text_ElapsedTime" />
 
 

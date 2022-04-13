@@ -10,4 +10,5 @@
     <color name="grey">#656565</color>
     <color name="yellow_ui">#FCDD3A</color>
     <color name="greyish_black">#47463F</color>
+    <color name="yellow_text">#FBDA31</color>
 </resources>

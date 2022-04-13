@@ -7,6 +7,34 @@
     android:layout_height="match_parent"
     >
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/greyish_black"
+        android:translationZ="90dp"
+        android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+        app:layout_constraintTop_toTopOf="parent"> <!--translationZ bring forward menu-->
+
+        <ImageButton
+            android:id="@+id/bt_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:background="@drawable/ic_baseline_account_circle_24"
+            android:backgroundTint="@color/yellow_ui"></ImageButton>
+
+        <ImageButton
+            android:id="@+id/bt_notifications"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:background="@drawable/ic_baseline_notifications_none_24"
+            android:backgroundTint="@color/yellow_ui"></ImageButton>
+
+    </androidx.appcompat.widget.Toolbar>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         android:layout_width="0dp"
