@@ -9,7 +9,7 @@
         android:id="@+id/text_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Username Placeholder"
+        android:text="Guest"
         android:textColor="@color/yellow_text"
         android:textSize="26sp"
         android:layout_marginBottom="300dp"
@@ -36,7 +36,7 @@
         android:layout_width="30mm"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:hint="Phone Number"
+        android:hint="Login Phone Number"
         android:singleLine="true"
         android:layout_marginTop="20dp"
         android:layout_marginRight="35dp"
@@ -50,7 +50,7 @@
         android:layout_width="30mm"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:hint="Password"
+        android:hint="Login Password"
         android:singleLine="true"
         android:layout_marginTop="20dp"
         android:layout_marginRight="35dp"
@@ -72,16 +72,17 @@
 
 
     <Button
-        android:id="@+id/bt_edit"
+        android:id="@+id/bt_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Edit"
+        android:text="Logout"
         android:textColor="@color/black"
         android:layout_marginTop="10dp"
         android:layout_marginRight="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/value_uid" />
+
 
 
     <Button

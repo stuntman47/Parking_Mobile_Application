@@ -1,5 +1,6 @@
 package com.example.parkingmobileapplication.ui.parking
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 
@@ -39,6 +40,38 @@ class ParkingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        var pref = requireActivity().getSharedPreferences("session", Context.MODE_PRIVATE)
+        var edit = pref.edit()
+        val user = pref.getString("username", "default value")
+        val phone = pref.getString("phoneNo", "default value").toString()
+        if (user.equals("default value")){ //if guest, change all text to default
+            binding.btTagid.setText("-123XYZ-")
+            binding.valueBalance.text = "0.00"
+            binding.valueStartTime.text = "00:00"
+            binding.valueElapsedTime.text = "0"
+            binding.valueChargeRate.text = "0.00"
+
+        }
+        else{
+            db = FirebaseDatabase.getInstance().getReference("Phone Number").child(phone)
+            db.addValueEventListener(object : ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(snapshot.exists()){
+                        val carplate = snapshot.child("car_plate").getValue(Integer::class.java)
+                        val balance = snapshot.child("balance").getValue(Integer::class.java)
+                        binding.btTagid.setText(carplate.toString())
+                        binding.valueBalance.text = balance.toString()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+
+            })
+        }
+
         binding.btReload.setOnClickListener {
             val reloadFragment = Reload()
             val transaction: FragmentTransaction = parentFragmentManager!!.beginTransaction()
@@ -60,7 +93,7 @@ class ParkingFragment : Fragment() {
 //            }
 //
 //            override fun onCancelled(error: DatabaseError) {
-//                TODO("Not yet implemented")
+//
 //            }
 //
 //        })
