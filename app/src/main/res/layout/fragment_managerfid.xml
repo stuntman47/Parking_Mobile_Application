@@ -4,19 +4,76 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/greyish_black"
     tools:context=".ui.rfid.ManageRFIDFragment">
 
-    <TextView
-        android:id="@+id/text_managerfid"
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/blankcard"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
+        android:src="@drawable/blankcard"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/antenna"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/rfid_symbol"
+        app:layout_constraintBottom_toBottomOf="@+id/blankcard"
+        app:layout_constraintEnd_toEndOf="@+id/blankcard"
+        app:layout_constraintStart_toStartOf="@+id/blankcard"
+        app:layout_constraintTop_toTopOf="@+id/blankcard" />
+
+    <TextView
+        android:id="@+id/rfid_uid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="E15094"
+        android:textColor="@color/black"
+        android:textSize="28sp"
+        app:layout_constraintEnd_toEndOf="@+id/blankcard"
+        app:layout_constraintStart_toStartOf="@+id/blankcard"
+        app:layout_constraintTop_toTopOf="@+id/blankcard" />
+
+    <TextView
+        android:id="@+id/text_carplate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1234"
+        android:textColor="@color/black"
+        android:textSize="28sp"
+        android:layout_marginBottom="20dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/blankcard"
+        app:layout_constraintEnd_toEndOf="@+id/blankcard"
+        app:layout_constraintStart_toStartOf="@+id/blankcard" />
+
+    <EditText
+        android:id="@+id/value_carplate"
+        android:layout_width="25mm"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:hint="plate number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/antenna" />
+
+    <Button
+        android:id="@+id/bt_LinkRFID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Link Car Plate"
+        android:textColor="@color/black"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/value_carplate" />
+
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

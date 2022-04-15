@@ -12,7 +12,6 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.fragment.findNavController
 import com.example.parkingmobileapplication.R
 import com.example.parkingmobileapplication.databinding.FragmentParkingBinding
-import com.example.parkingmobileapplication.databinding.FragmentReloadBinding
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -58,7 +57,7 @@ class ParkingFragment : Fragment() {
             db.addValueEventListener(object : ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if(snapshot.exists()){
-                        val carplate = snapshot.child("car_plate").getValue(Integer::class.java)
+                        val carplate = snapshot.child("car_plate").getValue(String::class.java)
                         val balance = snapshot.child("balance").getValue(Integer::class.java)
                         binding.btTagid.setText(carplate.toString())
                         binding.valueBalance.text = balance.toString()
@@ -97,6 +96,7 @@ class ParkingFragment : Fragment() {
 //            }
 //
 //        })
+
 
     }
 

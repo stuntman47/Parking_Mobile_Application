@@ -33,7 +33,7 @@
         app:layout_constraintStart_toStartOf="@+id/reload_textview" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/value_topup"
         android:layout_width="40mm"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
@@ -72,6 +72,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/value_rm20"
         app:layout_constraintTop_toTopOf="@+id/value_rm20" />
+
+    <Button
+        android:id="@+id/bt_topup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/roundedrectangle"
+        android:text="Reload"
+        android:textSize="24sp"
+        app:backgroundTint="@null"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/value_rm20" />
 
 
 

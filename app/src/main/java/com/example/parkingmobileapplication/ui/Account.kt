@@ -102,7 +102,7 @@ class Account : Fragment() {
     }
 
     private fun register(username: String, phoneNo: String, password: String, uid: String){
-        val useraccount = UserDatabase(username,password,uid,0,0)
+        val useraccount = UserDatabase(username,password,uid,0,"0")
         db = FirebaseDatabase.getInstance().getReference("Phone Number")
 
         FirebaseDatabase.getInstance().getReference("Phone Number").child(phoneNo).addListenerForSingleValueEvent(object : ValueEventListener {
