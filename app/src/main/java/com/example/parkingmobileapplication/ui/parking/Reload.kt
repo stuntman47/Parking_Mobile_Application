@@ -46,36 +46,42 @@ class Reload : Fragment() {
             binding.valueTopup.setText("50")
         }
 
-        binding.btTopup.setOnClickListener {
-            db = FirebaseDatabase.getInstance().getReference("Phone Number").child(phone)
-            val amount = binding.valueTopup.text.toString()
-            if (amount == ""){
-                Toast.makeText(context, "Amount cannot be empty", Toast.LENGTH_SHORT).show()
-            }
-            else if (phone == "default value"){
-                Toast.makeText(context, "Account required", Toast.LENGTH_SHORT).show()
-            }
-            else{
-                db.addListenerForSingleValueEvent(object : ValueEventListener{
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val bal = snapshot.child("balance").getValue(Integer::class.java).toString()
-                        db.child("balance").setValue(Integer.parseInt(amount)+Integer.parseInt(bal))
-                        Toast.makeText(context, "Reload successful", Toast.LENGTH_SHORT).show()
+        if (phone == "default value"){
+            Toast.makeText(context, "Account Required", Toast.LENGTH_SHORT).show()
+        }
+        else{
+            binding.btTopup.setOnClickListener {
+                db = FirebaseDatabase.getInstance().getReference("Phone Number").child(phone)
+                val amount = binding.valueTopup.text.toString()
+                if (amount == ""){
+                    Toast.makeText(context, "Amount cannot be empty", Toast.LENGTH_SHORT).show()
+                }
+                else if (phone == "default value"){
+                    Toast.makeText(context, "Account required", Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    db.addListenerForSingleValueEvent(object : ValueEventListener{
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            val bal = snapshot.child("balance").getValue(Integer::class.java).toString()
+                            db.child("balance").setValue(Integer.parseInt(amount)+Integer.parseInt(bal))
+                            Toast.makeText(context, "Reload successful", Toast.LENGTH_SHORT).show()
 
-                        val fragmentParking = ParkingFragment()
-                        val transaction: FragmentTransaction = parentFragmentManager!!.beginTransaction()
-                        transaction.replace(R.id.fragment_container, fragmentParking)
-                        transaction.commit()
-                    }
+                            val fragmentParking = ParkingFragment()
+                            val transaction: FragmentTransaction = parentFragmentManager!!.beginTransaction()
+                            transaction.replace(R.id.fragment_container, fragmentParking)
+                            transaction.commit()
+                        }
 
-                    override fun onCancelled(error: DatabaseError) {
-                        TODO("Not yet implemented")
-                    }
+                        override fun onCancelled(error: DatabaseError) {
+                            TODO("Not yet implemented")
+                        }
 
-                })
+                    })
 
+                }
             }
         }
+
     }
 
 

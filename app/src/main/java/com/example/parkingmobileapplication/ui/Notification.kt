@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.parkingmobileapplication.ParkingAdapter
@@ -24,6 +26,7 @@ class Notification : Fragment() {
     private lateinit var db: DatabaseReference
     //private lateinit var viewModel: NotificationViewModel
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,18 +38,28 @@ class Notification : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewnotification = binding.notificationList //initialize notification list in adapter
-        viewnotification.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-        //viewnotification.setHasFixedSize(true)
 
-        listnotification = arrayListOf<ParkingDatabase>() //initialize data array list
+        setFragmentResultListener("requestKey") { requestKey, bundle ->
+            // We use a String here, but any type that can be put in a Bundle is supported
+            val timestamp = bundle.getString("bundleKey")
+            //Toast.makeText(context, "test: "+ timestamp.toString(), Toast.LENGTH_SHORT).show()
+            // Do something with the result
 
-        getNotifications()
+            viewnotification = binding.notificationList //initialize notification list in adapter
+            viewnotification.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+            //viewnotification.setHasFixedSize(true)
+
+            listnotification = arrayListOf<ParkingDatabase>() //initialize data array list
+
+            getNotifications(timestamp.toString())
+        }
+
+
 
     }
 
-    private fun getNotifications(){
-        db = FirebaseDatabase.getInstance().getReference("epochtime1")
+    private fun getNotifications(timestamp: String){
+        db = FirebaseDatabase.getInstance().getReference("Log").child(timestamp)
         db.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
 //                val car = snapshot.child("car_plate").getValue(String::class.java)

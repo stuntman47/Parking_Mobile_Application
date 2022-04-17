@@ -40,8 +40,25 @@ class ManageRFIDFragment : Fragment() {
         if (user.equals("default value")){
             binding.rfidUid.text = "E15049"
             binding.textCarplate.text = "1234"
+            binding.valueCarplate.isEnabled = false
+            Toast.makeText(context, "Account Required", Toast.LENGTH_SHORT).show()
         }
         else{
+            binding.valueCarplate.isEnabled = true
+            binding.btLinkRFID.setOnClickListener {
+                val carplate = binding.valueCarplate.text.toString()
+
+                if (carplate == ""){
+                    Toast.makeText(context, "Invalid car plate", Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    db = FirebaseDatabase.getInstance().getReference("Phone Number").child(phone)
+                    db.child("car_plate").setValue(carplate)
+                    Toast.makeText(context, "Link successful", Toast.LENGTH_SHORT).show()
+                    binding.valueCarplate.text.clear()
+                }
+            }
+
             //retrieve from database
             db = FirebaseDatabase.getInstance().getReference("Phone Number").child(phone)
             db.addValueEventListener(object: ValueEventListener{
@@ -59,20 +76,10 @@ class ManageRFIDFragment : Fragment() {
                 }
 
             })
+
         }
 
-        binding.btLinkRFID.setOnClickListener {
-            val carplate = binding.valueCarplate.text.toString()
-            if (carplate == ""){
-                Toast.makeText(context, "Invalid car plate", Toast.LENGTH_SHORT).show()
-            }
-            else{
-                db = FirebaseDatabase.getInstance().getReference("Phone Number").child(phone)
-                db.child("car_plate").setValue(carplate)
-                Toast.makeText(context, "Link successful", Toast.LENGTH_SHORT).show()
-                binding.valueCarplate.text.clear()
-            }
-        }
+
     }
 
     override fun onDestroyView() {

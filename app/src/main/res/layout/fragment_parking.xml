@@ -64,7 +64,7 @@
         app:layout_constraintStart_toStartOf="@+id/guideline" />
 
     <Button
-        android:id="@+id/bt_tagid"
+        android:id="@+id/bt_Tagid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="carplate"
@@ -106,15 +106,17 @@
 
     <TextView
         android:id="@+id/value_StartTime"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
         android:hint="00:00"
-        android:text="08:40 AM"
-        android:textSize="36sp"
-        android:textStyle="bold"
+        android:maxLines="2"
+        android:text="1970 08:40 AM"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
-        android:layout_marginTop="15dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/text_chargeRate"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/text_StartTime" />
 

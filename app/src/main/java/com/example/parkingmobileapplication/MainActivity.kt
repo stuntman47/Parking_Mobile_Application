@@ -15,6 +15,7 @@ import com.example.parkingmobileapplication.ui.history.HistoryFragment
 import com.example.parkingmobileapplication.ui.parking.ParkingFragment
 import com.example.parkingmobileapplication.ui.rfid.ManageRFIDFragment
 import android.graphics.drawable.ColorDrawable
+import android.util.Log
 import android.view.Window
 import android.widget.Toolbar
 import androidx.appcompat.app.ActionBar
@@ -22,6 +23,17 @@ import android.view.View
 import androidx.fragment.app.FragmentTransaction
 import com.example.parkingmobileapplication.ui.Account
 import com.example.parkingmobileapplication.ui.Notification
+import org.eclipse.paho.android.service.MqttAndroidClient
+import org.eclipse.paho.client.mqttv3.IMqttActionListener
+import org.eclipse.paho.client.mqttv3.IMqttToken
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions
+import java.lang.Exception
+import org.eclipse.paho.client.mqttv3.MqttMessage
+
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener
+
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -34,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        WindowCompat.setDecorFitsSystemWindows(window,false)
+
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.title_bar))
@@ -79,4 +92,5 @@ class MainActivity : AppCompatActivity() {
             transaction.commit()
         }
     }
+
 }
