@@ -36,7 +36,7 @@ import org.eclipse.paho.client.mqttv3.IMqttMessageListener
 
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), Communicator {
 
     private lateinit var binding: ActivityMainBinding
     private val parkingFragment = ParkingFragment()
@@ -91,6 +91,17 @@ class MainActivity : AppCompatActivity() {
             transaction.replace(R.id.fragment_container, fragment)
             transaction.commit()
         }
+    }
+
+    override fun passMQTTdata(ntpTime: String) {
+        val bundle = Bundle()
+        bundle.putString("ntpTime", ntpTime)
+
+        val fragmentParking = ParkingFragment()
+        fragmentParking.arguments = bundle
+        val transaction: FragmentTransaction = supportFragmentManager!!.beginTransaction()
+        transaction.replace(R.id.fragment_container, fragmentParking)
+        transaction.commit()
     }
 
 }

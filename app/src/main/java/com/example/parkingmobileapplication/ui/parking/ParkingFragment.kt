@@ -26,6 +26,10 @@ import org.eclipse.paho.client.mqttv3.*
 import java.text.SimpleDateFormat
 import java.util.*
 import org.eclipse.paho.client.mqttv3.MqttMessage
+import android.content.SharedPreferences
+
+
+
 
 
 
@@ -41,13 +45,54 @@ class ParkingFragment : Fragment() {
     private lateinit var db2 : DatabaseReference
     private lateinit var mqttManager: MqttManagerImpl
 
-    private var clientId = "kotlin_client_FYP"
+    var receiveMQTT: String? = ""
+
+    var clientId = "kotlin_client_FYP"
 
     // TAG
     companion object {
         const val TAG = "AndroidMqttClient"
     }
 
+
+    override fun onResume() {
+        super.onResume()
+
+        //resume activity state
+        var pref = requireActivity().getSharedPreferences("session", Context.MODE_PRIVATE)
+        val time = pref.getString("startTime", "default value").toString()
+
+        if (time != "default value"){
+            //read elapsedTime
+            FirebaseDatabase.getInstance().getReference("Log").child(time).addListenerForSingleValueEvent(object : ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val elapsedTime = snapshot.child("elapsedTime").getValue(String::class.java)
+                    //set value to text
+                    val simpleDate = SimpleDateFormat("dd-MM-yyyy hh:mm:ss a") //date format
+                    val currentDate = simpleDate.format(time.toLong() * 1000) //ntp_Time
+
+                    binding.valueElapsedTime.text = elapsedTime
+
+                    binding.valueStartTime.text = currentDate
+                    binding.btTagid.setBackgroundColor(Color.parseColor("#0F43A9"))
+                    binding.btTagid.isEnabled = false
+
+                    receiveMQTT = arguments?.getString("ntpTime")
+
+                    mqttAction(receiveMQTT.toString())
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+
+            })
+        }
+
+
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,6 +110,7 @@ class ParkingFragment : Fragment() {
         mqttManager.init()
         initMqttStatusListener()
         mqttManager.connect()
+
 
         binding = FragmentParkingBinding.inflate(layoutInflater)
         return (binding.root)
@@ -164,11 +210,9 @@ class ParkingFragment : Fragment() {
         }
 
 
-        binding.btTagid.setOnClickListener {
-            //updateRFIDDatabase(1650077546, phone)
-        }
-
     }
+
+
 
 //    //clear up for memory
 //    override fun onDestroyView() {
@@ -199,6 +243,12 @@ class ParkingFragment : Fragment() {
                 //write activity to database
                 val parking = ParkingDatabase(uid,plate,"0", price, status)
                 db2.child(ntp_Time).setValue(parking) //set ntp_Time
+
+                //save value to sharedPreferences
+                var pref = requireActivity().getSharedPreferences("session", Context.MODE_PRIVATE)
+                var editor = pref.edit()
+                editor.putString("startTime",ntp_Time)
+                editor.commit()
 
                 //set value to text
                 val simpleDate = SimpleDateFormat("dd-MM-yyyy hh:mm:ss a") //date format
@@ -299,9 +349,10 @@ class ParkingFragment : Fragment() {
 
     private fun mqttAction(data: String) {
         var pref = requireActivity().getSharedPreferences("session", Context.MODE_PRIVATE)
-        //var edit = pref.edit()
+        var editor = pref.edit()
         //val user = pref.getString("username", "default value")
         val phone = pref.getString("phoneNo", "default value").toString()
+        //val time = pref.getString("startTime", "default value").toString()
 
         val timestamp = data
         val delim = ":"
@@ -328,7 +379,6 @@ class ParkingFragment : Fragment() {
                             .show()
                     }
                     else{
-                        //change color if active
 
                         binding.btTagid.setBackgroundColor(Color.parseColor("#0F43A9"))
                         binding.btTagid.isEnabled = false
@@ -342,6 +392,11 @@ class ParkingFragment : Fragment() {
                     Toast.makeText(context, "Parking End", Toast.LENGTH_SHORT).show()
                     binding.btTagid.setBackgroundColor(Color.parseColor("#47463F"))
                     binding.btTagid.isEnabled = true
+
+                    //clear startTime from sharedPreferences
+                    editor.remove("startTime")
+                    editor.commit()
+
                     updateRFIDDatabase(arr[1],phone, "exit")
                 }
                 else if (arr[0] == "Update"){ //parking_update
