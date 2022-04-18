@@ -1,7 +1,6 @@
 package com.example.parkingmobileapplication.ui.parking
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -14,24 +13,15 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import com.example.parkingmobileapplication.*
 import com.example.parkingmobileapplication.R
 import com.example.parkingmobileapplication.databinding.FragmentParkingBinding
 import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.database.DataSnapshot
-import org.eclipse.paho.android.service.MqttAndroidClient
-import org.eclipse.paho.client.mqttv3.*
 import java.text.SimpleDateFormat
 import java.util.*
 import org.eclipse.paho.client.mqttv3.MqttMessage
-import android.content.SharedPreferences
-
-
-
-
-
 
 
 const val serverUri = "tcp://broker.hivemq.com:1883"
@@ -40,7 +30,7 @@ const val subscriptionTopic = "FYP/#" //topic wild card, get sub data from root 
 
 class ParkingFragment : Fragment() {
     private lateinit var binding: FragmentParkingBinding
-    private var _binding: FragmentParkingBinding? = null
+//    private var _binding: FragmentParkingBinding? = null
     private lateinit var db : DatabaseReference
     private lateinit var db2 : DatabaseReference
     private lateinit var mqttManager: MqttManagerImpl
@@ -61,10 +51,11 @@ class ParkingFragment : Fragment() {
         //resume activity state
         var pref = requireActivity().getSharedPreferences("session", Context.MODE_PRIVATE)
         val time = pref.getString("startTime", "default value").toString()
+        val carplate = pref.getString("car_plate", "default value").toString()
 
         if (time != "default value"){
             //read elapsedTime
-            FirebaseDatabase.getInstance().getReference("Log").child(time).addListenerForSingleValueEvent(object : ValueEventListener{
+            FirebaseDatabase.getInstance().getReference("Log").child(carplate).child(time).addListenerForSingleValueEvent(object : ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val elapsedTime = snapshot.child("elapsedTime").getValue(String::class.java)
                     //set value to text
@@ -79,7 +70,7 @@ class ParkingFragment : Fragment() {
 
                     receiveMQTT = arguments?.getString("ntpTime")
 
-                    mqttAction(receiveMQTT.toString())
+                    //mqttAction(receiveMQTT.toString())
 
                 }
 
@@ -89,7 +80,7 @@ class ParkingFragment : Fragment() {
 
             })
         }
-
+        Log.e("Parking","resume");
 
 
     }
@@ -117,6 +108,9 @@ class ParkingFragment : Fragment() {
     }
 
     private fun initMqttStatusListener() {
+        var pref = requireActivity().getSharedPreferences("session", Context.MODE_PRIVATE)
+        val carplate = pref.getString("car_plate", "default value")
+
         mqttManager.mqttStatusListener = object : MqttStatusListener{
             override fun onConnectComplete(reconnect: Boolean, serverURI: String) {
                 if (reconnect){
@@ -144,7 +138,16 @@ class ParkingFragment : Fragment() {
 
             override fun onMessageArrived(topic: String, message: MqttMessage) {
                 displayInMessagesList(String(message.payload))
-                mqttAction(String(message.payload))
+                //ensure car plate is linked
+//                if (carplate.equals("default value")){
+//                    Toast.makeText(context, "Car Plate Link required", Toast.LENGTH_SHORT).show()
+//                }
+//                else{
+//                    //Toast.makeText(requireContext(), "Function Run", Toast.LENGTH_SHORT).show()
+//                    //mqttAction(String(message.payload))
+//                }
+
+
             }
 
 
@@ -152,8 +155,8 @@ class ParkingFragment : Fragment() {
     }
 
     private fun displayInMessagesList(message: String){
-        //display timestamp
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+
     }
 
     private fun displayInDebugLog(message: String){
@@ -166,7 +169,6 @@ class ParkingFragment : Fragment() {
 
 
         var pref = requireActivity().getSharedPreferences("session", Context.MODE_PRIVATE)
-        var edit = pref.edit()
         val user = pref.getString("username", "default value")
         val phone = pref.getString("phoneNo", "default value").toString()
         if (user.equals("default value")){ //if guest, change all text to default
@@ -220,13 +222,13 @@ class ParkingFragment : Fragment() {
 //        _binding = null
 //    }
 
-    private fun writeRFIDDatabase(ntp_Time: String, phone: String, status: String){
+    private fun writeRFIDDatabase(ntp_Time: String, phone: String, status: String, car_plate: String){
         //get car plate number from database, search UID and get car plate number
 
         //obtain user information
         db = FirebaseDatabase.getInstance().getReference("Phone Number").child(phone)
         //initialize path
-        db2 = FirebaseDatabase.getInstance().getReference("Log")
+        db2 = FirebaseDatabase.getInstance().getReference("Log").child(car_plate)
         db.addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 val uid = snapshot.child("uid").getValue(String::class.java)
@@ -241,7 +243,7 @@ class ParkingFragment : Fragment() {
                 db.child("balance").setValue(amount)
 
                 //write activity to database
-                val parking = ParkingDatabase(uid,plate,"0", price, status)
+                val parking = ParkingDatabase(uid,plate,"0", price, status, ntp_Time)
                 db2.child(ntp_Time).setValue(parking) //set ntp_Time
 
                 //save value to sharedPreferences
@@ -273,7 +275,7 @@ class ParkingFragment : Fragment() {
 
     }
 
-    private fun updateRFIDDatabase(ntp_Time: String, phone: String, status: String){
+    private fun updateRFIDDatabase(ntp_Time: String, phone: String, status: String, car_plate: String){
 
         val startTime = binding.valueStartTime.text.toString() //get start Time
         val simpleDate = SimpleDateFormat("dd-MM-yyyy hh:mm:ss a", Locale.ENGLISH) //date format
@@ -301,7 +303,7 @@ class ParkingFragment : Fragment() {
 
                 val price = Integer.parseInt(balance) - amount
 
-                db2 = FirebaseDatabase.getInstance().getReference("Log").child(output.toString())
+                db2 = FirebaseDatabase.getInstance().getReference("Log").child(car_plate).child(output.toString())
                 db2.addListenerForSingleValueEvent(object: ValueEventListener{
                     override fun onDataChange(snapshot2: DataSnapshot) {
                         if(snapshot2.exists())
@@ -352,7 +354,7 @@ class ParkingFragment : Fragment() {
         var editor = pref.edit()
         //val user = pref.getString("username", "default value")
         val phone = pref.getString("phoneNo", "default value").toString()
-        //val time = pref.getString("startTime", "default value").toString()
+        val car_plate = pref.getString("car_plate", "default value").toString()
 
         val timestamp = data
         val delim = ":"
@@ -383,7 +385,7 @@ class ParkingFragment : Fragment() {
                         binding.btTagid.setBackgroundColor(Color.parseColor("#0F43A9"))
                         binding.btTagid.isEnabled = false
                         Toast.makeText(context, "Parking Started", Toast.LENGTH_SHORT).show()
-                        writeRFIDDatabase(arr[1],phone,"entry")
+                        writeRFIDDatabase(arr[1],phone,"entry",car_plate!!)
                     }
 
                 }
@@ -397,13 +399,13 @@ class ParkingFragment : Fragment() {
                     editor.remove("startTime")
                     editor.commit()
 
-                    updateRFIDDatabase(arr[1],phone, "exit")
+                    updateRFIDDatabase(arr[1],phone, "exit", car_plate!!)
                 }
                 else if (arr[0] == "Update"){ //parking_update
                     //update Parking
                     if (!binding.btTagid.isEnabled){
 
-                        updateRFIDDatabase(arr[1],phone,"entry")
+                        updateRFIDDatabase(arr[1],phone,"entry", car_plate!!)
                     }
 
                 }

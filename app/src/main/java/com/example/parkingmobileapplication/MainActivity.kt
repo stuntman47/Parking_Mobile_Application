@@ -98,9 +98,10 @@ class MainActivity : AppCompatActivity(), Communicator {
         bundle.putString("ntpTime", ntpTime)
 
         val fragmentParking = ParkingFragment()
-        fragmentParking.arguments = bundle
+        //fragmentParking.arguments = bundle
+        fragmentParking.setArguments(bundle);
         val transaction: FragmentTransaction = supportFragmentManager!!.beginTransaction()
-        transaction.replace(R.id.fragment_container, fragmentParking)
+        transaction.replace(R.id.fragment_container, fragmentParking, ntpTime)
         transaction.commit()
     }
 

@@ -3,20 +3,23 @@ package com.example.parkingmobileapplication.ui
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.FragmentTransaction
+import com.example.parkingmobileapplication.*
 import com.example.parkingmobileapplication.R
-import com.example.parkingmobileapplication.UserDatabase
 import com.example.parkingmobileapplication.databinding.FragmentAccountBinding
 import com.example.parkingmobileapplication.ui.parking.ParkingFragment
+import com.example.parkingmobileapplication.ui.parking.serverUri
+import com.example.parkingmobileapplication.ui.parking.subscriptionTopic
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-
+import org.eclipse.paho.client.mqttv3.MqttMessage
 
 
 class Account : Fragment() {
@@ -24,13 +27,77 @@ class Account : Fragment() {
     private var _binding: FragmentAccountBinding? = null
     private lateinit var db : DatabaseReference
 
+    private lateinit var mqttManager: MqttManagerImpl
+    private lateinit var communicator: Communicator
+
+    var clientId = "kotlin_client_FYP"
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        mqttManager = MqttManagerImpl(
+            requireActivity().applicationContext,
+            serverUri,
+            clientId,
+            arrayOf(subscriptionTopic),
+            IntArray(1){ 0 }
+        )
+        mqttManager.init()
+        initMqttStatusListener()
+        mqttManager.connect()
+
+        communicator = activity as Communicator
+
         binding = FragmentAccountBinding.inflate(layoutInflater)
         return (binding.root)
+    }
+
+    private fun initMqttStatusListener() {
+        mqttManager.mqttStatusListener = object : MqttStatusListener {
+            override fun onConnectComplete(reconnect: Boolean, serverURI: String) {
+                if (reconnect){
+                    displayInDebugLog("Reconnected to : $serverURI")
+                } else{
+                    displayInDebugLog("Connected to: $serverURI")
+                }
+            }
+
+            override fun onConnectFailure(exception: Throwable) {
+                displayInDebugLog("Failed to connect")
+            }
+
+            override fun onConnectionLost(exception: Throwable) {
+                displayInDebugLog("The Connection was lost.")
+            }
+
+            override fun onTopicSubscriptionSuccess() {
+                displayInDebugLog("Subscribed!")
+            }
+
+            override fun onTopicSubscriptionError(exception: Throwable) {
+                displayInDebugLog("Failed to subscribe")
+            }
+
+            override fun onMessageArrived(topic: String, message: MqttMessage) {
+                displayInMessagesList(String(message.payload))
+
+                communicator.passMQTTdata(String(message.payload))
+                //mqttAction(String(message.payload))
+            }
+
+
+        }
+    }
+
+    private fun displayInMessagesList(message: String){
+        //display timestamp
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun displayInDebugLog(message: String){
+        Log.i(ParkingFragment.TAG, message)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -81,6 +148,7 @@ class Account : Fragment() {
         binding.btLogout.setOnClickListener {
             edit.remove("username")
             edit.remove("phoneNo")
+            edit.remove("car_plate")
             edit.commit()
 
             binding.valueName.text.clear()
@@ -151,12 +219,13 @@ class Account : Fragment() {
                     val checkpassword = snapshot.child("password").getValue(String::class.java)
                     if (checkpassword.equals(password)){
                         val name = snapshot.child("username").getValue(String::class.java)
-
+                        val carplate = snapshot.child("car_plate").getValue(String::class.java)
                         //store user session
                         var pref = activity!!.getSharedPreferences("session", Context.MODE_PRIVATE)
                         var editor = pref.edit()
                         editor.putString("username",name)
                         editor.putString("phoneNo", phoneNo)
+                        editor.putString("car_plate", carplate)
                         editor.commit()
 
                         val fragmentParking = ParkingFragment()

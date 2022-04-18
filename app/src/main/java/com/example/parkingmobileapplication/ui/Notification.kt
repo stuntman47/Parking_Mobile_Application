@@ -1,7 +1,6 @@
 package com.example.parkingmobileapplication.ui
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,20 +8,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.FragmentTransaction
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.parkingmobileapplication.*
-import com.example.parkingmobileapplication.R
 import com.example.parkingmobileapplication.databinding.FragmentNotificationBinding
 import com.example.parkingmobileapplication.ui.parking.ParkingFragment
-import com.example.parkingmobileapplication.ui.parking.Reload
 import com.example.parkingmobileapplication.ui.parking.serverUri
 import com.example.parkingmobileapplication.ui.parking.subscriptionTopic
 import com.google.firebase.database.*
 import org.eclipse.paho.client.mqttv3.MqttMessage
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -94,6 +91,7 @@ class Notification : Fragment() {
             override fun onMessageArrived(topic: String, message: MqttMessage) {
                 displayInMessagesList(String(message.payload))
 
+
                 communicator.passMQTTdata(String(message.payload))
                 //mqttAction(String(message.payload))
             }
@@ -104,7 +102,7 @@ class Notification : Fragment() {
 
     private fun displayInMessagesList(message: String){
         //display timestamp
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Please standby", Toast.LENGTH_SHORT).show()
     }
 
     private fun displayInDebugLog(message: String){
@@ -114,7 +112,8 @@ class Notification : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
+        var pref = requireActivity().getSharedPreferences("session", Context.MODE_PRIVATE)
+        val carplate = pref.getString("car_plate", "default value").toString() //get user car plate
 
         setFragmentResultListener("requestKey") { requestKey, bundle ->
             // We use a String here, but any type that can be put in a Bundle is supported
@@ -130,7 +129,7 @@ class Notification : Fragment() {
 
 
 
-            getNotifications(timestamp.toString())
+            getNotifications(timestamp.toString(), carplate)
 
 
         }
@@ -139,8 +138,8 @@ class Notification : Fragment() {
 
     }
 
-    private fun getNotifications(timestamp: String){
-        db = FirebaseDatabase.getInstance().getReference("Log").child(timestamp)
+    private fun getNotifications(timestamp: String, carplate: String){
+        db = FirebaseDatabase.getInstance().getReference("Log").child(carplate).child(timestamp)
         db.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
 //                val car = snapshot.child("car_plate").getValue(String::class.java)

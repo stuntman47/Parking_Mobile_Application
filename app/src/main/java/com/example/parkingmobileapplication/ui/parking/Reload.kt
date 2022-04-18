@@ -2,30 +2,97 @@ package com.example.parkingmobileapplication.ui.parking
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.FragmentTransaction
+import com.example.parkingmobileapplication.Communicator
+import com.example.parkingmobileapplication.MqttManagerImpl
+import com.example.parkingmobileapplication.MqttStatusListener
 import com.example.parkingmobileapplication.R
 import com.example.parkingmobileapplication.databinding.FragmentReloadBinding
 import com.google.firebase.database.*
+import org.eclipse.paho.client.mqttv3.MqttMessage
 
 
 class Reload : Fragment() {
     private lateinit var binding: FragmentReloadBinding
     private lateinit var db: DatabaseReference
 
+    private lateinit var mqttManager: MqttManagerImpl
+    private lateinit var communicator: Communicator
 
+    var clientId = "kotlin_client_FYP"
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        mqttManager = MqttManagerImpl(
+            requireActivity().applicationContext,
+            serverUri,
+            clientId,
+            arrayOf(subscriptionTopic),
+            IntArray(1){ 0 }
+        )
+        mqttManager.init()
+        initMqttStatusListener()
+        mqttManager.connect()
+
+        communicator = activity as Communicator
+
         binding = FragmentReloadBinding.inflate(layoutInflater)
         return (binding.root)
+    }
+
+    private fun initMqttStatusListener() {
+        mqttManager.mqttStatusListener = object : MqttStatusListener {
+            override fun onConnectComplete(reconnect: Boolean, serverURI: String) {
+                if (reconnect){
+                    displayInDebugLog("Reconnected to : $serverURI")
+                } else{
+                    displayInDebugLog("Connected to: $serverURI")
+                }
+            }
+
+            override fun onConnectFailure(exception: Throwable) {
+                displayInDebugLog("Failed to connect")
+            }
+
+            override fun onConnectionLost(exception: Throwable) {
+                displayInDebugLog("The Connection was lost.")
+            }
+
+            override fun onTopicSubscriptionSuccess() {
+                displayInDebugLog("Subscribed!")
+            }
+
+            override fun onTopicSubscriptionError(exception: Throwable) {
+                displayInDebugLog("Failed to subscribe")
+            }
+
+            override fun onMessageArrived(topic: String, message: MqttMessage) {
+                displayInMessagesList(String(message.payload))
+
+                communicator.passMQTTdata(String(message.payload))
+                //mqttAction(String(message.payload))
+            }
+
+
+        }
+    }
+
+    private fun displayInMessagesList(message: String){
+        //display timestamp
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun displayInDebugLog(message: String){
+        Log.i(ParkingFragment.TAG, message)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
