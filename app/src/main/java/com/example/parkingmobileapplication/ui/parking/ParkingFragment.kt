@@ -35,7 +35,7 @@ class ParkingFragment : Fragment() {
     private lateinit var db2 : DatabaseReference
     private lateinit var mqttManager: MqttManagerImpl
 
-    var receiveMQTT: String? = ""
+    var receiveMQTT: String? = null
 
     var clientId = "kotlin_client_FYP"
 
@@ -44,9 +44,8 @@ class ParkingFragment : Fragment() {
         const val TAG = "AndroidMqttClient"
     }
 
-
-    override fun onResume() {
-        super.onResume()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         //resume activity state
         var pref = requireActivity().getSharedPreferences("session", Context.MODE_PRIVATE)
@@ -68,7 +67,6 @@ class ParkingFragment : Fragment() {
                     binding.btTagid.setBackgroundColor(Color.parseColor("#0F43A9"))
                     binding.btTagid.isEnabled = false
 
-                    receiveMQTT = arguments?.getString("ntpTime")
 
                     //mqttAction(receiveMQTT.toString())
 
@@ -80,7 +78,20 @@ class ParkingFragment : Fragment() {
 
             })
         }
-        Log.e("Parking","resume");
+
+        if (arguments != null){
+            receiveMQTT = arguments?.getString("ntpTime")
+            //Toast.makeText(context, "Value get successful", Toast.LENGTH_SHORT).show()
+            mqttAction(receiveMQTT.toString())
+        }
+        else{
+            //Toast.makeText(context, "Value null", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    override fun onResume() {
+        super.onResume()
 
 
     }
@@ -139,13 +150,15 @@ class ParkingFragment : Fragment() {
             override fun onMessageArrived(topic: String, message: MqttMessage) {
                 displayInMessagesList(String(message.payload))
                 //ensure car plate is linked
-//                if (carplate.equals("default value")){
-//                    Toast.makeText(context, "Car Plate Link required", Toast.LENGTH_SHORT).show()
-//                }
-//                else{
-//                    //Toast.makeText(requireContext(), "Function Run", Toast.LENGTH_SHORT).show()
-//                    //mqttAction(String(message.payload))
-//                }
+                if (carplate.equals("default value")){
+                    if (isAdded){ //null check
+                        Toast.makeText(context, "Car Plate Link required", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                else{
+                    //Toast.makeText(requireContext(), "Function Run", Toast.LENGTH_SHORT).show()
+                    mqttAction(String(message.payload))
+                }
 
 
             }
@@ -155,7 +168,9 @@ class ParkingFragment : Fragment() {
     }
 
     private fun displayInMessagesList(message: String){
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        if (isAdded){
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
 
     }
 
@@ -319,7 +334,9 @@ class ParkingFragment : Fragment() {
                             binding.valueElapsedTime.text = minutes.toString()
                         }
                         else{
-                            Toast.makeText(context, output.toString(), Toast.LENGTH_SHORT).show()
+                            if (isAdded){
+                                Toast.makeText(context, output.toString(), Toast.LENGTH_SHORT).show()
+                            }
                         }
 
 
@@ -343,7 +360,7 @@ class ParkingFragment : Fragment() {
         //send notification
         val epochtime = output.toString() //initial entry time
 
-        setFragmentResult("requestKey", bundleOf("bundleKey" to epochtime))
+        parentFragmentManager.setFragmentResult("requestKey", bundleOf("bundleKey" to epochtime))
 
 
     }
@@ -355,6 +372,7 @@ class ParkingFragment : Fragment() {
         //val user = pref.getString("username", "default value")
         val phone = pref.getString("phoneNo", "default value").toString()
         val car_plate = pref.getString("car_plate", "default value").toString()
+        val time = pref.getString("startTime", "default value").toString()
 
         val timestamp = data
         val delim = ":"
@@ -373,33 +391,49 @@ class ParkingFragment : Fragment() {
 //                                .show()
 
                     if (car_plate == "0" || car_plate.equals(null)) {
-                        Toast.makeText(context, "Car Plate required", Toast.LENGTH_SHORT)
-                            .show()
+                        if (isAdded){
+                            Toast.makeText(context, "Car Plate required", Toast.LENGTH_SHORT)
+                                .show()
+                        }
                     }
-                    else if (balance!! < 2 || balance.equals(null)){
-                        Toast.makeText(context, "Balance not sufficient", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                    else{
+                    else if (balance != null) { //null check
+                        if (balance < 2){
+                            if (isAdded){
+                                Toast.makeText(context, "Balance not sufficient", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        } else{
 
-                        binding.btTagid.setBackgroundColor(Color.parseColor("#0F43A9"))
-                        binding.btTagid.isEnabled = false
-                        Toast.makeText(context, "Parking Started", Toast.LENGTH_SHORT).show()
-                        writeRFIDDatabase(arr[1],phone,"entry",car_plate!!)
+                            binding.btTagid.setBackgroundColor(Color.parseColor("#0F43A9"))
+                            binding.btTagid.isEnabled = false
+                            if (isAdded){
+                                Toast.makeText(context, "Parking Started", Toast.LENGTH_SHORT).show()
+                            }
+                            writeRFIDDatabase(arr[1],phone,"entry",car_plate!!)
+                        }
                     }
 
                 }
                 else if (arr[0] == "Exit"){ //parking_exit
-                    //switch back color when not active
-                    Toast.makeText(context, "Parking End", Toast.LENGTH_SHORT).show()
-                    binding.btTagid.setBackgroundColor(Color.parseColor("#47463F"))
-                    binding.btTagid.isEnabled = true
+                    if (time.equals("default value")){
+                        if (isAdded) {
+                            Toast.makeText(context, "Wrong Entrance", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    else{
+                        if (isAdded) {
+                            Toast.makeText(context, "Parking End", Toast.LENGTH_SHORT).show()
+                        }
+                        binding.btTagid.setBackgroundColor(Color.parseColor("#47463F")) //switch back color when not active
+                        binding.btTagid.isEnabled = true
 
-                    //clear startTime from sharedPreferences
-                    editor.remove("startTime")
-                    editor.commit()
+                        //clear startTime from sharedPreferences
+                        editor.remove("startTime")
+                        editor.commit()
 
-                    updateRFIDDatabase(arr[1],phone, "exit", car_plate!!)
+                        updateRFIDDatabase(arr[1],phone, "exit", car_plate!!)
+                    }
+
                 }
                 else if (arr[0] == "Update"){ //parking_update
                     //update Parking

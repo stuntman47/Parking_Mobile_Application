@@ -142,13 +142,13 @@ class Notification : Fragment() {
         db = FirebaseDatabase.getInstance().getReference("Log").child(carplate).child(timestamp)
         db.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
-//                val car = snapshot.child("car_plate").getValue(String::class.java)
-//                val price = snapshot.child("price").getValue(Integer::class.java)
-//                Collections.addAll(listnotification, car!!, price!!)
-                val log = snapshot.getValue(ParkingDatabase::class.java)
-                listnotification.add(log!!)
+                if (snapshot.exists()){
+                    val log = snapshot.getValue(ParkingDatabase::class.java)
+                    listnotification.add(log!!)
 
-                viewnotification.adapter = ParkingAdapter(listnotification) //initialize recycler view
+                    viewnotification.adapter = ParkingAdapter(listnotification) //initialize recycler view
+                }
+
             }
 
             override fun onCancelled(error: DatabaseError) {
