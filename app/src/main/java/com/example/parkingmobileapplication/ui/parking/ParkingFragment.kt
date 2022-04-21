@@ -154,7 +154,7 @@ class ParkingFragment : Fragment() {
 
                 if (carplate.equals("default value")){
                     if (isAdded){ //null check
-                        Toast.makeText(context, "Car Plate Link required", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Car Plate link required", Toast.LENGTH_SHORT).show()
                     }
                 }
                 else{
@@ -170,9 +170,9 @@ class ParkingFragment : Fragment() {
     }
 
     private fun displayInMessagesList(message: String){
-        if (isAdded){
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-        }
+//        if (isAdded){
+//            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+//        }
 
     }
 
