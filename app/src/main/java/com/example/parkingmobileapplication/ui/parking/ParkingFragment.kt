@@ -149,7 +149,9 @@ class ParkingFragment : Fragment() {
 
             override fun onMessageArrived(topic: String, message: MqttMessage) {
                 displayInMessagesList(String(message.payload))
+
                 //ensure car plate is linked
+
                 if (carplate.equals("default value")){
                     if (isAdded){ //null check
                         Toast.makeText(context, "Car Plate Link required", Toast.LENGTH_SHORT).show()
@@ -250,6 +252,8 @@ class ParkingFragment : Fragment() {
                 val balance = snapshot.child("balance").getValue(Integer::class.java).toString()
 
 
+
+
                 val plate = binding.btTagid.text.toString() //get car plate
                 val amount = Integer.parseInt(balance) - 2 //deduct balance
                 val price = Integer.parseInt(balance) - amount
@@ -285,8 +289,8 @@ class ParkingFragment : Fragment() {
         })
 
         //send notification
-        val epochtime = ntp_Time //ntp_Time
-        setFragmentResult("requestKey", bundleOf("bundleKey" to epochtime))
+//        val epochtime = ntp_Time //ntp_Time
+//        setFragmentResult("requestKey", bundleOf("bundleKey" to epochtime))
 
     }
 
@@ -357,10 +361,10 @@ class ParkingFragment : Fragment() {
 
         })
 
-        //send notification
-        val epochtime = output.toString() //initial entry time
-
-        parentFragmentManager.setFragmentResult("requestKey", bundleOf("bundleKey" to epochtime))
+//        //send notification
+//        val epochtime = output.toString() //initial entry time
+//
+//        parentFragmentManager.setFragmentResult("requestKey", bundleOf("bundleKey" to epochtime))
 
 
     }
@@ -385,6 +389,7 @@ class ParkingFragment : Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val car_plate = snapshot.child("car_plate").getValue(String::class.java)
                 val balance = snapshot.child("balance").getValue(Integer::class.java)
+                val uid = snapshot.child("uid").getValue(String::class.java)
 
                 if (arr[0] == "Entry"){ //parking_entry
 //                            Toast.makeText(context, "Car Plate required", Toast.LENGTH_SHORT)
@@ -402,8 +407,15 @@ class ParkingFragment : Fragment() {
                                 Toast.makeText(context, "Balance not sufficient", Toast.LENGTH_SHORT)
                                     .show()
                             }
-                        } else{
+                        } else if (arr[2] != uid){ //entry check uid
+                            if (isAdded){
+                                Log.i(TAG, arr[2])
+                                Toast.makeText(context, "Incorrect UID", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
 
+                        }
+                        else{
                             binding.btTagid.setBackgroundColor(Color.parseColor("#0F43A9"))
                             binding.btTagid.isEnabled = false
                             if (isAdded){
@@ -419,6 +431,13 @@ class ParkingFragment : Fragment() {
                         if (isAdded) {
                             Toast.makeText(context, "Wrong Entrance", Toast.LENGTH_SHORT).show()
                         }
+                    }
+                    else if (arr[2] != uid){
+                        if (isAdded){
+                            Toast.makeText(context, "Incorrect UID", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+
                     }
                     else{
                         if (isAdded) {

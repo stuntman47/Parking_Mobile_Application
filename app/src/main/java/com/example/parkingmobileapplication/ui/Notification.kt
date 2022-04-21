@@ -114,27 +114,23 @@ class Notification : Fragment() {
 
         var pref = requireActivity().getSharedPreferences("session", Context.MODE_PRIVATE)
         val carplate = pref.getString("car_plate", "default value").toString() //get user car plate
+        val time = pref.getString("startTime", "default value").toString()
 
-        setFragmentResultListener("requestKey") { requestKey, bundle ->
-            // We use a String here, but any type that can be put in a Bundle is supported
-            val timestamp = bundle.getString("bundleKey")
-            //Toast.makeText(context, "test: "+ timestamp.toString(), Toast.LENGTH_SHORT).show()
-            // Do something with the result
+//        setFragmentResultListener("requestKey") { requestKey, bundle ->
+//            // We use a String here, but any type that can be put in a Bundle is supported
+//            val timestamp = bundle.getString("bundleKey")
+//            //Toast.makeText(context, "test: "+ timestamp.toString(), Toast.LENGTH_SHORT).show()
+//            // Do something with the result
 
-            viewnotification = binding.notificationList //initialize notification list in adapter
-            viewnotification.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-            //viewnotification.setHasFixedSize(true)
+        viewnotification = binding.notificationList //initialize notification list in adapter
+        viewnotification.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+        //viewnotification.setHasFixedSize(true)
 
-            listnotification = arrayListOf<ParkingDatabase>() //initialize data array list
-
-
-
-            getNotifications(timestamp.toString(), carplate)
+        listnotification = arrayListOf<ParkingDatabase>() //initialize data array list
 
 
-        }
 
-
+        getNotifications(time, carplate)
 
     }
 
