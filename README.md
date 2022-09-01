@@ -1,6 +1,6 @@
 # Parking_Mobile_Application
 
-This is a android software application developed for my university FYP project. The project is a IoT-based parking system to simulate the parking scenario using RFID technology
+This is a android software application developed for my university FYP project. The project is a IoT-based parking system to simulate the parking scenario using RFID technology. The application uses MQTT broker to send data to Google Firebase.
 
 UI interface of the Android application
 
@@ -12,7 +12,10 @@ UI interface of the Android application
 Hardware used:
 PN5180 RFID, ISO15693 protocol RFID card, Breadboard
 
-*Note: This is only part of the system, it is not functional without a full system.
+Hardware Connection Diagram
+![connection_diagram](https://user-images.githubusercontent.com/39916216/187906982-55a989c2-b5a7-427a-8587-4085c94169bf.jpg)
+
+
 Credits to https://github.com/ATrappmann/PN5180-Library for the hardware library
 
 
